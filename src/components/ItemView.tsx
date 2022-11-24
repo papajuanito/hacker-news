@@ -7,6 +7,7 @@ import { getUrlHostname } from '../helpers/url';
 import { Comment, Story } from '../types/HackerNews';
 import CommentItem from './CommentItem';
 import CommentItemSkeleton from './CommentItemSkeleton';
+import { BsArrowUpShort } from 'react-icons/bs';
 
 const COMMENTS_LIMIT = 10;
 
@@ -40,6 +41,21 @@ const Image = styled.img`
   margin-top: 12px;
 
   object-fit: cover;
+`;
+
+const ContentItem = styled.div`
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+
+  text-align: left;
+
+  span {
+    font-weight: 400;
+    color: #ffffff;
+  }
 `;
 
 const ItemImage = ({ item }: { item: Story }) => {
@@ -87,6 +103,14 @@ export default function ItemView() {
         <Title>{data.title}</Title>
         {data.url && <Url href={data.url}>{getUrlHostname(data.url)}</Url>}
         <ItemImage item={data} />
+        <ContentItem
+          style={{
+            marginTop: '8px',
+          }}
+        >
+          <BsArrowUpShort size={22} />
+          {data.score} · {data.by} · {`${data.descendants} comments`}
+        </ContentItem>
       </MetadataContainer>
       {renderComments()}
     </>
