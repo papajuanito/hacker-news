@@ -96,7 +96,6 @@ const ContentItem = styled.div`
 type Props = {
   story: Story;
   index: number;
-  loading?: boolean;
 };
 
 export default function StoryItem({ story, index }: Props) {
@@ -111,21 +110,31 @@ export default function StoryItem({ story, index }: Props) {
     queryFn: () => getUrlMetadata(story.url),
   });
 
+  const getHostnameWithFallback = useCallback(() => {
+    if (story.type !== 'story' || !story.url) {
+      return getUrlHostname('https://news.ycombinator.com');
+    }
+
+    return getUrlHostname(story.url);
+  }, [story.url, story.type]);
+
   const renderImageContent = useCallback(() => {
+    if (story.type !== 'story') {
+      return getHostnameWithFallback().charAt(0);
+    }
+
     if (isLoading || !data) {
-      const hostname = getUrlHostname(story.url);
-      return hostname.charAt(0);
+      return getHostnameWithFallback().charAt(0);
     }
 
     // @ts-ignore
     if (!isLoading && !data.image) {
-      const hostname = getUrlHostname(story.url);
-      return hostname.charAt(0);
+      return getHostnameWithFallback().charAt(0);
     }
 
     // @ts-ignore
     return <Image src={data.image} />;
-  }, [data, isLoading, story.url]);
+  }, [data, isLoading, story.url, story.type]);
 
   const renderTimestamp = () => {
     return formatDistanceToNowStrict(new Date(story.time * 1000), {
@@ -147,7 +156,7 @@ export default function StoryItem({ story, index }: Props) {
       </Content>
       <Content>
         <ContentUrl>
-          {++index}. <span>{getUrlHostname(story.url)}</span>
+          {++index}. <span>{getHostnameWithFallback()}</span>
         </ContentUrl>
         <ContentTitle>{story.title}</ContentTitle>
         <ContentItem>

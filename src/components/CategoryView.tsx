@@ -5,6 +5,7 @@ import { getStoriesDecorated } from '../helpers/hackerNewsApi';
 import { Category } from '../types/HackerNews';
 import Header from './Header';
 import StoryItem from './StoryItem';
+import StoryItemSkeleton from './StoryItemSkeleton';
 
 // TODO: Implement infinite scrolling using pagination
 
@@ -16,7 +17,6 @@ export default function CategoryView() {
   const { data, isLoading, isPaused, fetchNextPage } = useInfiniteQuery({
     queryKey: [categoryId],
     queryFn: ({ pageParam = 0 }) => {
-      console.log({ pageParam, LIMIT });
       return getStoriesDecorated(categoryId as Category, pageParam, LIMIT);
     },
     getNextPageParam: (_, pages) => {
@@ -30,7 +30,9 @@ export default function CategoryView() {
     }
 
     if (isLoading || !data) {
-      return <div>loading</div>;
+      return [...new Array(LIMIT)].map((_, index) => (
+        <StoryItemSkeleton key={`loading-story-item-${index}`} />
+      ));
     }
 
     const stories = data.pages.flatMap((i) => i);
