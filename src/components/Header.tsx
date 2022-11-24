@@ -6,12 +6,11 @@ const Container = styled.div`
 `;
 
 const TitleContainer = styled.div`
-  padding: 14px;
+  padding: 14px 14px 10px;
 `;
 
 const DateContainer = styled.p`
   margin: 0;
-  margin-bottom: 4px;
   padding: 0;
 
   letter-spacing: 1px;
@@ -23,8 +22,8 @@ const DateContainer = styled.p`
 const Title = styled.h1`
   margin: 0;
   padding: 0;
-  font-weight: 500;
-  font-size: 26px;
+  font-weight: 600;
+  font-size: 22px;
 `;
 
 const getFormattedDate = () =>

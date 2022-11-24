@@ -37,7 +37,7 @@ export const getItem = async <T = Item>(itemId: number): Promise<T> => {
 export const getUrlMetadata = async (url: string) => {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/metadata?url=${encodeURIComponent(url)}`,
+      `/api/metadata?url=${encodeURIComponent(url)}`,
     );
 
     return response.json();

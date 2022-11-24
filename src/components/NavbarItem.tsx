@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Container = styled.div<{ active?: boolean }>`
   padding: 8px 20px;
-  background-color: ${({ active }) => (active ? '#3e77fb' : '#3d3d3d')};
+  background-color: ${({ active }) => (active ? '#3f97e5' : '#3d3d3d')};
 
   border-radius: 18px;
 

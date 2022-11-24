@@ -42,8 +42,8 @@ export default function CategoryView() {
         hasMore={true}
         next={fetchNextPage}
       >
-        {stories.map((story) => (
-          <StoryItem key={story.id} story={story} />
+        {stories.map((story, index) => (
+          <StoryItem key={story.id} story={story} index={index} />
         ))}
       </InfiniteScroll>
     );
