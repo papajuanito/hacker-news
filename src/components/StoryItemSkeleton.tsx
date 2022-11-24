@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 const Container = styled.div`
   display: flex;
@@ -16,6 +16,12 @@ const Container = styled.div`
   color: #ffffff;
 `;
 
+const shimmer = keyframes`
+  100% {
+    transform: translateX(100%);
+  }
+`;
+
 const Image = styled.div`
   background-color: #323233;
   border-radius: 5px;
@@ -24,6 +30,27 @@ const Image = styled.div`
   width: 70px;
 
   margin-right: 14px;
+
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(82, 82, 82, 0) 0,
+      rgba(82, 82, 82, 0.2) 20%,
+      rgba(82, 82, 82, 0.5) 40%,
+      rgba(82, 82, 82, 0)
+    );
+    animation: ${shimmer} 2s infinite;
+    content: '';
+  }
 `;
 
 const Content = styled.div`
@@ -40,6 +67,27 @@ const Line = styled.div`
   height: 12px;
   width: 100%;
   border-radius: 3px;
+
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(82, 82, 82, 0) 0,
+      rgba(82, 82, 82, 0.2) 20%,
+      rgba(82, 82, 82, 0.5) 40%,
+      rgba(82, 82, 82, 0)
+    );
+    animation: ${shimmer} 2s infinite;
+    content: '';
+  }
 `;
 
 const LineMid = styled(Line)`
