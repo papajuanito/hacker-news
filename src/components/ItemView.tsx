@@ -1,10 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { getItem, getUrlMetadata } from '../helpers/hackerNewsApi';
 import { getUrlHostname } from '../helpers/url';
 import { Comment, Story } from '../types/HackerNews';
 import CommentItem from './CommentItem';
+import CommentItemSkeleton from './CommentItemSkeleton';
+
+const COMMENTS_LIMIT = 10;
 
 const MetadataContainer = styled.div`
   padding: 16px;
@@ -63,6 +67,18 @@ export default function ItemView() {
     enabled: !!data,
   });
 
+  const renderComments = useCallback(() => {
+    if (commentsQuery.isLoading || !commentsQuery.data) {
+      return [...new Array(COMMENTS_LIMIT)].map((_, index) => (
+        <CommentItemSkeleton key={`comment-item-skeleton-${index}`} />
+      ));
+    }
+
+    return commentsQuery.data.map((comment) => (
+      <CommentItem key={comment.id} comment={comment} />
+    ));
+  }, [commentsQuery.data, commentsQuery.isLoading]);
+
   if (!data || isLoading) return <div>Loading Item data</div>;
 
   return (
@@ -72,9 +88,7 @@ export default function ItemView() {
         {data.url && <Url href={data.url}>{getUrlHostname(data.url)}</Url>}
         <ItemImage item={data} />
       </MetadataContainer>
-      {commentsQuery.data?.map((comment) => (
-        <CommentItem key={comment.id} comment={comment} />
-      ))}
+      {renderComments()}
     </>
   );
 }
