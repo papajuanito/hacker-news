@@ -6,7 +6,7 @@ import { getItem } from '../helpers/hackerNewsApi';
 import CommentItemSkeleton from './CommentItemSkeleton';
 
 const Container = styled.div<{ parent: boolean }>`
-  padding: 14px;
+  padding: 10px;
   padding-right: 0;
   padding-bottom: 0;
   font-size: 14px;
@@ -15,8 +15,8 @@ const Container = styled.div<{ parent: boolean }>`
   ${({ parent }) =>
     parent &&
     css`
-      border-bottom: 3px solid #3d3d3d;
-      padding-right: 14px;
+      border-bottom: 2px solid #3d3d3d;
+      padding-right: 10px;
     `}
 `;
 
@@ -36,11 +36,11 @@ const Content = styled.div`
   }
 
   overflow: hidden;
-  padding-bottom: 14px;
+  padding-bottom: 10px;
 `;
 
 const KidsContainer = styled(Container)`
-  border-left: 3px solid #3d3d3d;
+  border-left: 2px solid #3d3d3d;
   padding: 0;
   height: 100%;
 `;
