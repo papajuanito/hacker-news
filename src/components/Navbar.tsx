@@ -1,7 +1,11 @@
 import styled from 'styled-components';
 import NavbarItem from './NavbarItem';
-import { AiFillStar } from 'react-icons/ai';
+import { AiFillStar, AiFillEye } from 'react-icons/ai';
 import { FaMicrophone } from 'react-icons/fa';
+import { Category } from '../types/HackerNews';
+import { TfiMedallAlt } from 'react-icons/tfi';
+import { IoMdPaperPlane } from 'react-icons/io';
+import { BsFillBriefcaseFill } from 'react-icons/bs';
 
 const Container = styled.div`
   display: flex;
@@ -24,35 +28,32 @@ const NAVBAR_ITEMS = [
   {
     icon: <AiFillStar />,
     title: 'Top Stories',
-    active: true,
+    to: `/${Category.TOP_STORIES}`,
   },
   {
     icon: <FaMicrophone />,
     title: 'Ask HN',
+    to: `/${Category.ASK_STORIES}`,
   },
   {
-    icon: <AiFillStar />,
-    title: 'Top Stories',
+    icon: <AiFillEye />,
+    title: 'Show HN',
+    to: `/${Category.SHOW_STORIES}`,
   },
   {
-    icon: <FaMicrophone />,
-    title: 'Ask HN',
+    icon: <TfiMedallAlt />,
+    title: 'Best Stories',
+    to: `/${Category.BEST_STORIES}`,
   },
   {
-    icon: <AiFillStar />,
-    title: 'Top Stories',
+    icon: <IoMdPaperPlane />,
+    title: 'New Stories',
+    to: `/${Category.NEW_STORIES}`,
   },
   {
-    icon: <FaMicrophone />,
-    title: 'Ask HN',
-  },
-  {
-    icon: <AiFillStar />,
-    title: 'Top Stories',
-  },
-  {
-    icon: <FaMicrophone />,
-    title: 'Ask HN',
+    icon: <BsFillBriefcaseFill />,
+    title: 'Jobs',
+    to: `/${Category.JOB_STORIES}`,
   },
 ];
 

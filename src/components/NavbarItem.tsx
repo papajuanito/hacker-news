@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { Link, useLocation } from 'react-router-dom';
 
-const Container = styled.div<{ active?: boolean }>`
+const Container = styled(Link)<{ active?: boolean }>`
   padding: 8px 20px;
   background-color: ${({ active }) => (active ? '#3f97e5' : '#3d3d3d')};
 
@@ -13,6 +14,9 @@ const Container = styled.div<{ active?: boolean }>`
 
   font-weight: 500;
   flex-shrink: 0;
+
+  text-decoration: none;
+  color: #ffffff;
 `;
 
 const IconContainer = styled.span`
@@ -25,12 +29,16 @@ const IconContainer = styled.span`
 type Props = {
   icon: ReactNode;
   title: string;
-  active?: boolean;
+  to: string;
 };
 
-export default function NavbarItem({ icon, title, active }: Props) {
+export default function NavbarItem({ icon, title, to }: Props) {
+  const { pathname } = useLocation();
+
+  const active = pathname === to;
+
   return (
-    <Container active={active}>
+    <Container to={to} active={active}>
       <IconContainer>{icon}</IconContainer> {title}
     </Container>
   );
