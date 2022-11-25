@@ -77,23 +77,21 @@ export default function ItemView() {
     queryFn: () => getItem<Story>(parseInt(itemId!, 10)),
   });
 
-  const commentsQuery = useQuery({
-    queryKey: ['item-kids', data?.id],
-    queryFn: () => Promise.all(data!.kids.map(getItem<Comment>)),
-    enabled: !!data,
-  });
+  //const commentsQuery = useQuery({
+  //  queryKey: ['item-kids', data?.id],
+  //  queryFn: () => Promise.all(data!.kids.map(getItem<Comment>)),
+  //  enabled: !!data,
+  //});
 
   const renderComments = useCallback(() => {
-    if (commentsQuery.isLoading || !commentsQuery.data) {
-      return [...new Array(COMMENTS_LIMIT)].map((_, index) => (
-        <CommentItemSkeleton key={`comment-item-skeleton-${index}`} />
-      ));
+    if (!data || data.kids.length <= 0) {
+      return;
     }
 
-    return commentsQuery.data.map((comment) => (
-      <CommentItem key={comment.id} comment={comment} />
+    return data.kids.map((comment) => (
+      <CommentItem key={comment} id={comment} parent />
     ));
-  }, [commentsQuery.data, commentsQuery.isLoading]);
+  }, [data]);
 
   if (!data || isLoading) return <div>Loading Item data</div>;
 

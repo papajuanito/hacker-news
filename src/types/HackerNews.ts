@@ -12,7 +12,7 @@ export type StoriesResponse = number[];
 export type Comment = {
   by: string;
   id: number;
-  kids: number[];
+  kids?: number[];
   time: number;
   text: string;
   type: 'comment';

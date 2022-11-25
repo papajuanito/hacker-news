@@ -31,6 +31,7 @@ export const getItem = async <T = Item>(itemId: number): Promise<T> => {
   const response = await fetch(
     `${HACKER_NEWS_API_BASE_URL}/v0/item/${itemId}.json`,
   );
+
   return response.json();
 };
 
