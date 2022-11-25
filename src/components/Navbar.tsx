@@ -28,7 +28,7 @@ const NAVBAR_ITEMS = [
   {
     icon: <AiFillStar />,
     title: 'Top Stories',
-    to: `/${Category.TOP_STORIES}`,
+    to: `/`,
   },
   {
     icon: <FaMicrophone />,
