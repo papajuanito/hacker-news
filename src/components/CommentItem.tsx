@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { Comment } from '../types/HackerNews';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -30,6 +31,18 @@ const TitleUser = styled.span`
   color: #f67943;
 `;
 
+const ContentContainer = styled.div<{ visible: boolean }>`
+  overflow: hidden;
+  transition: max-height 0.2s ease-in-out;
+  max-height: 1000px;
+
+  ${({ visible }) =>
+    !visible &&
+    css`
+      max-height: 0;
+    `}
+`;
+
 const Content = styled.div`
   a {
     color: #3f97e5;
@@ -51,6 +64,8 @@ type Props = {
 };
 
 export default function CommentItem({ id, parent = false }: Props) {
+  const [visible, setVisible] = useState(true);
+
   const { data, isLoading } = useQuery({
     queryKey: ['comment', id],
     queryFn: () => getItem<Comment>(id),
@@ -68,12 +83,18 @@ export default function CommentItem({ id, parent = false }: Props) {
     }
 
     return (
-      <KidsContainer parent={false} className="wepate">
+      <KidsContainer parent={false}>
         {comment.kids.map((kid) => (
           <CommentItem key={`comment-${kid}`} id={kid} />
         ))}
       </KidsContainer>
     );
+  };
+
+  const toggleVisibility = () => {
+    setVisible((v) => {
+      return !v;
+    });
   };
 
   if (isLoading || !data) {
@@ -86,11 +107,13 @@ export default function CommentItem({ id, parent = false }: Props) {
 
   return (
     <Container parent={parent}>
-      <Title>
+      <Title onClick={toggleVisibility}>
         <TitleUser>{data.by}</TitleUser> · {renderTimestamp(data)}
       </Title>
-      <Content dangerouslySetInnerHTML={{ __html: data.text }} />
-      {renderKids(data)}
+      <ContentContainer visible={visible}>
+        <Content dangerouslySetInnerHTML={{ __html: data.text }} />
+        {renderKids(data)}
+      </ContentContainer>
     </Container>
   );
 }
