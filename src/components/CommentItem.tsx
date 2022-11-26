@@ -39,8 +39,8 @@ const TitleUser = styled.span`
 
 const ContentContainer = styled.div<{ visible: boolean }>`
   overflow: hidden;
-  transition: max-height 350ms ease-in-out;
-  max-height: 5000px;
+  transition: max-height 300ms ease-in-out;
+  max-height: ${({ visible }) => (visible ? '10000px' : '500px')};
 
   ${({ visible }) =>
     !visible &&
