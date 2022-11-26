@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getItem } from '../helpers/hackerNewsApi';
 import CommentItemSkeleton from './CommentItemSkeleton';
 
-const Container = styled.div<{ parent: boolean }>`
+const Container = styled.div<{ parent: boolean; visible: boolean }>`
   padding: 10px;
   padding-right: 0;
   padding-bottom: 0;
@@ -18,6 +18,12 @@ const Container = styled.div<{ parent: boolean }>`
     css`
       border-bottom: 2px solid #3d3d3d;
       padding-right: 10px;
+    `}
+
+  ${({ visible }) =>
+    !visible &&
+    css`
+      background-color: #353737;
     `}
 `;
 
@@ -33,8 +39,8 @@ const TitleUser = styled.span`
 
 const ContentContainer = styled.div<{ visible: boolean }>`
   overflow: hidden;
-  transition: max-height 0.2s ease-in-out;
-  max-height: 1000px;
+  transition: max-height 350ms ease-in-out;
+  max-height: 5000px;
 
   ${({ visible }) =>
     !visible &&
@@ -52,7 +58,7 @@ const Content = styled.div`
   padding-bottom: 10px;
 `;
 
-const KidsContainer = styled(Container)`
+const KidsContainer = styled.div`
   border-left: 2px solid #3d3d3d;
   padding: 0;
   height: 100%;
@@ -83,7 +89,7 @@ export default function CommentItem({ id, parent = false }: Props) {
     }
 
     return (
-      <KidsContainer parent={false}>
+      <KidsContainer>
         {comment.kids.map((kid) => (
           <CommentItem key={`comment-${kid}`} id={kid} />
         ))}
@@ -106,7 +112,7 @@ export default function CommentItem({ id, parent = false }: Props) {
   }
 
   return (
-    <Container parent={parent}>
+    <Container parent={parent} visible={visible}>
       <Title onClick={toggleVisibility}>
         <TitleUser>{data.by}</TitleUser> · {renderTimestamp(data)}
       </Title>
