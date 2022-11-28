@@ -4,12 +4,11 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { getItem, getUrlMetadata } from '../helpers/hackerNewsApi';
 import { getUrlHostname } from '../helpers/url';
-import { Comment, Story } from '../types/HackerNews';
+import { Story } from '../types/HackerNews';
 import CommentItem from './CommentItem';
-import CommentItemSkeleton from './CommentItemSkeleton';
 import { BsArrowUpShort } from 'react-icons/bs';
-
-const COMMENTS_LIMIT = 10;
+import { BiCommentX } from 'react-icons/bi';
+import { formatDistanceToNowStrict } from 'date-fns';
 
 const MetadataContainer = styled.div`
   padding: 16px;
@@ -36,7 +35,7 @@ const Url = styled.a`
 
 const Image = styled.img`
   width: 100%;
-  max-height: 200px;
+  height: 180px;
   border-radius: 5px;
   margin-top: 12px;
 
@@ -58,6 +57,22 @@ const ContentItem = styled.div`
   }
 `;
 
+const EmptyCommentsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 40px 20px;
+  font-size: 14px;
+`;
+
+const EmptyCommentsIcon = styled(BiCommentX)`
+  margin-bottom: 14px;
+
+  color: #3c4040;
+`;
+
 const ItemImage = ({ item }: { item: Story }) => {
   const { data, isLoading } = useQuery({
     queryKey: [item.url],
@@ -77,15 +92,14 @@ export default function ItemView() {
     queryFn: () => getItem<Story>(parseInt(itemId!, 10)),
   });
 
-  //const commentsQuery = useQuery({
-  //  queryKey: ['item-kids', data?.id],
-  //  queryFn: () => Promise.all(data!.kids.map(getItem<Comment>)),
-  //  enabled: !!data,
-  //});
-
   const renderComments = useCallback(() => {
-    if (!data || data.kids.length <= 0) {
-      return;
+    if (!data || !data.kids || data.kids.length <= 0) {
+      return (
+        <EmptyCommentsContainer>
+          <EmptyCommentsIcon size={48} />
+          No one has commented yet
+        </EmptyCommentsContainer>
+      );
     }
 
     return data.kids.map((comment) => (
@@ -93,7 +107,19 @@ export default function ItemView() {
     ));
   }, [data]);
 
-  if (!data || isLoading) return <div>Loading Item data</div>;
+  const renderCommentCountOrDate = () => {
+    if (!data) return null;
+
+    if (!data.kids || data.kids.length <= 0) {
+      return formatDistanceToNowStrict(new Date(data.time * 1000), {
+        addSuffix: true,
+      });
+    }
+
+    return `${data.descendants} comments`;
+  };
+
+  if (!data || isLoading) return null;
 
   return (
     <>
@@ -107,7 +133,7 @@ export default function ItemView() {
           }}
         >
           <BsArrowUpShort size={22} />
-          {data.score} · {data.by} · {`${data.descendants} comments`}
+          {data.score} · {data.by} · {renderCommentCountOrDate()}
         </ContentItem>
       </MetadataContainer>
       {renderComments()}
