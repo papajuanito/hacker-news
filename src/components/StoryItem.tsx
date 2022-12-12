@@ -148,7 +148,7 @@ const StoryImage = ({ story }: { story: Story }) => {
 
 export default function StoryItem({ id, index }: Props) {
   const { data: story, isLoading } = useQuery({
-    queryKey: ['story', id],
+    queryKey: ['item', id],
     queryFn: () => getItem<Story>(id),
   });
 
