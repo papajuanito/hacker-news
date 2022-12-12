@@ -18,6 +18,15 @@ export const getStories = async (
   return body;
 };
 
+export const getStoriesPaginated = async (
+  category: Category,
+  offset: number = 0,
+  limit: number = 20,
+): Promise<number[]> => {
+  const all = await getStories(category);
+  return all.slice(offset, offset + limit);
+}
+
 export const getStoriesDecorated = async (
   category: Category,
   offset: number = 0,

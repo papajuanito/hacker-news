@@ -3,10 +3,11 @@ import { formatDistanceToNowStrict } from 'date-fns';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { getUrlMetadata } from '../helpers/hackerNewsApi';
+import { getItem, getUrlMetadata } from '../helpers/hackerNewsApi';
 import { getUrlHostname } from '../helpers/url';
 import { Story } from '../types/HackerNews';
 import { BsArrowUpShort } from 'react-icons/bs';
+import StoryItemSkeleton from './StoryItemSkeleton';
 
 const Container = styled.div`
   display: flex;
@@ -94,73 +95,86 @@ const ContentItem = styled.div`
 `;
 
 type Props = {
-  story: Story;
+  id: number;
   index: number;
 };
+const getHostnameWithFallback = (story: Story) => {
+  if (story.type !== 'story' || !story.url) {
+    return getUrlHostname('https://news.ycombinator.com');
+  }
 
-export default function StoryItem({ story, index }: Props) {
-  const navigate = useNavigate();
+  return getUrlHostname(story.url);
+};
 
-  const handleOnClick = useCallback(() => {
-    navigate(`/item/${story.id}`);
-  }, [navigate, story]);
+const renderTimestamp = (story: Story) => {
+  return formatDistanceToNowStrict(new Date(story.time * 1000), {
+    addSuffix: true,
+  });
+};
 
-  const { data, isLoading } = useQuery({
-    queryKey: [story.url],
+const StoryImage = ({ story }: { story: Story }) => {
+  const { data: metadata, isLoading } = useQuery({
+    queryKey: ['metadata', story.url],
     queryFn: () => getUrlMetadata(story.url),
   });
 
-  const getHostnameWithFallback = useCallback(() => {
-    if (story.type !== 'story' || !story.url) {
-      return getUrlHostname('https://news.ycombinator.com');
-    }
-
-    return getUrlHostname(story.url);
-  }, [story.url, story.type]);
-
-  const renderImageContent = useCallback(() => {
+  const renderContent = useCallback(() => {
     if (story.type !== 'story') {
-      return getHostnameWithFallback().charAt(0);
+      return getHostnameWithFallback(story).charAt(0);
     }
 
-    if (isLoading || !data) {
-      return getHostnameWithFallback().charAt(0);
+    if (isLoading || !metadata) {
+      return getHostnameWithFallback(story).charAt(0);
     }
 
-    // @ts-ignore
-    if (!isLoading && !data.image) {
-      return getHostnameWithFallback().charAt(0);
+    if (!isLoading && !metadata.image) {
+      return getHostnameWithFallback(story).charAt(0);
     }
 
-    // @ts-ignore
-    return <Image src={data.image} />;
-  }, [data, isLoading, story.url, story.type]);
+    return <Image src={metadata.image} />;
+  }, [metadata, isLoading, story.url, story.type]);
 
-  const renderTimestamp = () => {
-    return formatDistanceToNowStrict(new Date(story.time * 1000), {
-      addSuffix: true,
-    });
-  };
+  return (
+    <ImageContainer
+      href={story.url}
+      onClick={(event) => {
+        event.stopPropagation();
+      }}
+    >
+      {renderContent()}
+    </ImageContainer>
+  );
+};
+
+export default function StoryItem({ id, index }: Props) {
+  const { data: story, isLoading } = useQuery({
+    queryKey: ['story', id],
+    queryFn: () => getItem<Story>(id),
+  });
+
+  const navigate = useNavigate();
+
+  const handleOnClick = useCallback(() => {
+    if (!story) return;
+    navigate(`/item/${story.id}`);
+  }, [navigate, story]);
+
+  if (!story || isLoading) {
+    return <StoryItemSkeleton />;
+  }
 
   return (
     <Container onClick={handleOnClick}>
       <Content>
-        <ImageContainer
-          href={story.url}
-          onClick={(event) => {
-            event.stopPropagation();
-          }}
-        >
-          {renderImageContent()}
-        </ImageContainer>
+        <StoryImage story={story} />
       </Content>
       <Content>
         <ContentUrl>
-          {++index}. <span>{getHostnameWithFallback()}</span>
+          {++index}. <span>{getHostnameWithFallback(story)}</span>
         </ContentUrl>
         <ContentTitle>{story.title}</ContentTitle>
         <ContentItem>
-          {story.by} · <span>{renderTimestamp()}</span>
+          {story.by} · <span>{renderTimestamp(story)}</span>
         </ContentItem>
         <ContentItem
           style={{
