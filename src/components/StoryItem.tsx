@@ -116,6 +116,7 @@ const StoryImage = ({ story }: { story: Story }) => {
   const { data: metadata, isLoading } = useQuery({
     queryKey: ['metadata', story.url],
     queryFn: () => getUrlMetadata(story.url),
+    enabled: !!story.url,
   });
 
   const renderContent = useCallback(() => {
