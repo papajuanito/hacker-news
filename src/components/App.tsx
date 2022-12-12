@@ -3,7 +3,19 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import CategoryView from './CategoryView';
 import ItemView from './ItemView';
 
-const queryClient = new QueryClient();
+// One hour of query staleness
+const staleTime = 1000 * 60 * 60;
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      staleTime,
+    },
+  },
+});
 
 const router = createBrowserRouter([
   {
