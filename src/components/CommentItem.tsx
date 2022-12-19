@@ -6,7 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getItem } from '../helpers/hackerNewsApi';
 import CommentItemSkeleton from './CommentItemSkeleton';
 
-const Container = styled.div<{ parent: boolean; visible: boolean }>`
+const Container = styled.button<{ parent: boolean; visible: boolean }>`
+  all: unset;
   padding: 10px;
   padding-right: 0;
   padding-bottom: 0;
@@ -40,7 +41,7 @@ const TitleUser = styled.span`
 const ContentContainer = styled.div<{ visible: boolean }>`
   overflow: hidden;
   transition: max-height 300ms ease-in-out;
-  max-height: ${({ visible }) => (visible ? '10000px' : '500px')};
+  max-height: ${({ visible }) => (visible ? '10000px' : '200px')};
 
   ${({ visible }) =>
     !visible &&
@@ -112,8 +113,8 @@ export default function CommentItem({ id, parent = false }: Props) {
   }
 
   return (
-    <Container parent={parent} visible={visible}>
-      <Title onClick={toggleVisibility}>
+    <Container parent={parent} visible={visible} onClick={toggleVisibility}>
+      <Title>
         <TitleUser>{data.by}</TitleUser> · {renderTimestamp(data)}
       </Title>
       <ContentContainer visible={visible}>
