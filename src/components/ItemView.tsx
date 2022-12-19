@@ -1,17 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { getItem, getUrlMetadata } from '../helpers/hackerNewsApi';
 import { getUrlHostname } from '../helpers/url';
 import { Story } from '../types/HackerNews';
 import CommentItem from './CommentItem';
-import { BsArrowUpShort } from 'react-icons/bs';
+import { BsArrowUpShort, BsArrowLeft, BsShare } from 'react-icons/bs';
 import { BiCommentX } from 'react-icons/bi';
 import { formatDistanceToNowStrict } from 'date-fns';
 
+const HACKER_NEWS_BASE_URL = 'https://news.ycombinator.com';
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 16px 0 10px;
+`;
+const HeaderLeft = styled.div``;
+const HeaderRight = styled.div``;
+
 const MetadataContainer = styled.div`
   padding: 16px;
+  padding-top: 0;
 
   border-bottom: 2px solid #3d3d3d;
 `;
@@ -91,6 +102,7 @@ const ItemImage = ({ item }: { item: Story }) => {
 
 export default function ItemView() {
   const { itemId } = useParams();
+  const navigate = useNavigate();
 
   const { data, isLoading } = useQuery({
     queryKey: ['item', itemId],
@@ -124,10 +136,41 @@ export default function ItemView() {
     return `${data.descendants} comments`;
   };
 
+  const handleShareClick = async () => {
+    if (!navigator.canShare || !data) return;
+
+    const url = data.url ?? `${HACKER_NEWS_BASE_URL}/item?id=${itemId}`;
+
+    try {
+      await navigator.share({
+        title: data.title,
+        text: data.title,
+        url,
+      });
+    } catch (e) {
+      alert(e);
+    }
+  };
+
   if (!data || isLoading) return null;
 
   return (
     <>
+      <Header>
+        <HeaderLeft>
+          <BsArrowLeft
+            size={24}
+            onClick={() => {
+              navigate(-1);
+            }}
+          />
+        </HeaderLeft>
+        <HeaderRight>
+          {!!navigator.canShare && (
+            <BsShare size={20} onClick={handleShareClick} />
+          )}
+        </HeaderRight>
+      </Header>
       <MetadataContainer>
         <Title>{data.title}</Title>
         {data.url && <Url href={data.url}>{getUrlHostname(data.url)}</Url>}
