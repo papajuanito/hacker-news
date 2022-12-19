@@ -2,9 +2,10 @@ import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
 
-const Container = styled(Link)<{ current?: boolean }>`
+const Container = styled(Link)<{ active: string }>`
   padding: 8px 20px;
-  background-color: ${({ current }) => (current ? '#3f97e5' : '#3d3d3d')};
+  background-color: ${({ active }) =>
+    active == 'true' ? '#3f97e5' : '#3d3d3d'};
 
   border-radius: 18px;
 
@@ -38,7 +39,7 @@ export default function NavbarItem({ icon, title, to }: Props) {
   const active = pathname === to;
 
   return (
-    <Container to={to} current={active}>
+    <Container to={to} active={active.toString()}>
       <IconContainer>{icon}</IconContainer> {title}
     </Container>
   );
