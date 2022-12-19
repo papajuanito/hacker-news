@@ -15,7 +15,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['/sfns-ttf/*', 'vite.svg'],
+      includeAssets: ['/sfns-ttf/*', 'vite.svg', 'hn.svg'],
       manifest: {
         theme_color: '#292c2d',
         background_color: '#292c2d',
@@ -24,7 +24,7 @@ export default defineConfig({
         description: 'Hacker News PWA client',
         icons: [
           {
-            src: '/vite.svg',
+            src: '/hn.svg',
             sizes: 'any',
           },
         ],

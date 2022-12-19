@@ -157,7 +157,7 @@ export default function StoryItem({ id, index }: Props) {
     queryFn: () => getItem<Story>(id),
   });
 
-  const { data: visited } = useQuery({
+  const { data: visited, isRefetching: isRefetchingVisited } = useQuery({
     queryKey: ['item', 'visited', id],
     queryFn: async (): Promise<boolean> =>
       hasItem(DB_STORE.ITEM_HISTORY, id.toString()),
@@ -179,7 +179,7 @@ export default function StoryItem({ id, index }: Props) {
     navigate(`/item/${story.id}`);
   }, [navigate, story]);
 
-  if (!story || isLoading || visited === undefined) {
+  if (!story || isLoading || visited === undefined || isRefetchingVisited) {
     return <StoryItemSkeleton />;
   }
 
