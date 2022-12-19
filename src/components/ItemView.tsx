@@ -73,6 +73,10 @@ const EmptyCommentsIcon = styled(BiCommentX)`
   color: #3c4040;
 `;
 
+const ItemText = styled.p`
+  font-size: 14px;
+`;
+
 const ItemImage = ({ item }: { item: Story }) => {
   const { data, isLoading } = useQuery({
     queryKey: [item.url],
@@ -127,6 +131,9 @@ export default function ItemView() {
         <Title>{data.title}</Title>
         {data.url && <Url href={data.url}>{getUrlHostname(data.url)}</Url>}
         <ItemImage item={data} />
+        {data.text && (
+          <ItemText dangerouslySetInnerHTML={{ __html: data.text }} />
+        )}
         <ContentItem
           style={{
             marginTop: '8px',

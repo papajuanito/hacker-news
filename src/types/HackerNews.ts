@@ -29,6 +29,7 @@ export type Story = {
   title: string;
   type: 'story';
   url: string;
+  text?: string;
 };
 
 export type Item = Story | Comment;
