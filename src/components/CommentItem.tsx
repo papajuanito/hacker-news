@@ -97,7 +97,8 @@ export default function CommentItem({ id, parent = false }: Props) {
     );
   };
 
-  const toggleVisibility = () => {
+  const toggleVisibility = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
     setVisible((v) => {
       return !v;
     });
