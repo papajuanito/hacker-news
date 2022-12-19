@@ -2,6 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
 import { parse } from 'node-html-parser';
+import NodeCache from 'node-cache';
+
+const cache = new NodeCache({
+  stdTTL: 60 * 60 * 2, // 2 hours
+});
 
 const router = express.Router();
 
@@ -19,6 +24,13 @@ const getImageFromMetadata = (metadata: Metadata) => {
 
 router.get('/metadata', async (req, res) => {
   const { url } = req.query;
+
+  if (cache.has(url as string)) {
+    const cached = cache.get(url as string);
+    res.status(200).json(cached).end();
+    return;
+  }
+
   try {
     const response = await fetch(url as string);
     const body = await response.text();
@@ -38,14 +50,16 @@ router.get('/metadata', async (req, res) => {
       };
     }, {});
 
-    res
-      .json({
-        ...metadata,
-        image: getImageFromMetadata(metadata),
-      })
-      .end();
+    const payload = {
+      ...metadata,
+      image: getImageFromMetadata(metadata),
+    };
+
+    cache.set(url as string, payload);
+
+    res.json(payload).end();
   } catch (e) {
-    res.json({}).end();
+    res.json(e).end();
   }
 });
 
