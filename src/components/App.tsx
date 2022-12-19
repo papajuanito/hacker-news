@@ -4,7 +4,7 @@ import CategoryView from './CategoryView';
 import ItemView from './ItemView';
 
 // One hour of query staleness
-const staleTime = 1000 * 60 * 60;
+export const staleTime = 1000 * 60 * 60;
 
 const queryClient = new QueryClient({
   defaultOptions: {

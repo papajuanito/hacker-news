@@ -8,6 +8,8 @@ import { getUrlHostname } from '../helpers/url';
 import { Story } from '../types/HackerNews';
 import { BsArrowUpShort } from 'react-icons/bs';
 import StoryItemSkeleton from './StoryItemSkeleton';
+import { storeItem, DB_STORE, hasItem } from '../helpers/storage';
+import { staleTime } from './App';
 
 const Container = styled.div`
   display: flex;
@@ -74,11 +76,13 @@ const ContentUrl = styled.div`
   font-size: 12px;
 `;
 
-const ContentTitle = styled.div`
+const ContentTitle = styled.div<{ visited?: boolean }>`
   font-weight: 500;
   letter-spacing: 0.4px;
   margin: 0;
   margin-bottom: 8px;
+
+  color: ${({ visited }) => (!visited ? '#ffffff' : '#4a5253')};
 `;
 
 const ContentItem = styled.div`
@@ -107,7 +111,7 @@ const getHostnameWithFallback = (story: Story) => {
 };
 
 const renderTimestamp = (story: Story) => {
-  return formatDistanceToNowStrict(new Date(story.time * 1000), {
+  return formatDistanceToNowStrict(new Date(story.time * 100), {
     addSuffix: true,
   });
 };
@@ -153,14 +157,29 @@ export default function StoryItem({ id, index }: Props) {
     queryFn: () => getItem<Story>(id),
   });
 
+  const { data: visited } = useQuery({
+    queryKey: ['item', 'visited', id],
+    queryFn: async (): Promise<boolean> =>
+      hasItem(DB_STORE.ITEM_HISTORY, id.toString()),
+    refetchOnMount: true,
+    staleTime: 0,
+  });
+
   const navigate = useNavigate();
 
-  const handleOnClick = useCallback(() => {
+  const handleOnClick = useCallback(async () => {
     if (!story) return;
+
+    await storeItem(
+      DB_STORE.ITEM_HISTORY,
+      story.id.toString(),
+      story.id.toString(),
+    );
+
     navigate(`/item/${story.id}`);
   }, [navigate, story]);
 
-  if (!story || isLoading) {
+  if (!story || isLoading || visited === undefined) {
     return <StoryItemSkeleton />;
   }
 
@@ -173,7 +192,7 @@ export default function StoryItem({ id, index }: Props) {
         <ContentUrl>
           {++index}. <span>{getHostnameWithFallback(story)}</span>
         </ContentUrl>
-        <ContentTitle>{story.title}</ContentTitle>
+        <ContentTitle visited={visited}>{story.title}</ContentTitle>
         <ContentItem>
           {story.by} · <span>{renderTimestamp(story)}</span>
         </ContentItem>
