@@ -6,8 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getItem } from '../helpers/hackerNewsApi';
 import CommentItemSkeleton from './CommentItemSkeleton';
 
-const Container = styled.button<{ parent: boolean; visible: boolean }>`
-  all: unset;
+const Container = styled.div<{ parent: boolean; visible: boolean }>`
   padding: 10px;
   padding-right: 0;
   padding-bottom: 0;
