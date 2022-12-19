@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQueries } from '@tanstack/react-query';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
 import { getStoriesPaginated } from '../helpers/hackerNewsApi';
 import { Category } from '../types/HackerNews';
 import Header from './Header';
@@ -8,9 +9,15 @@ import StoryItem from './StoryItem';
 
 const LIMIT = 10;
 
+const Container = styled.div`
+  flex-grow: 1;
+  overflow: scroll;
+`;
+
 export default function CategoryView() {
-  const { categoryId = Category.TOP_STORIES } =
-    useParams<{ categoryId: Category }>();
+  const { categoryId = Category.TOP_STORIES } = useParams<{
+    categoryId: Category;
+  }>();
 
   const { data, isLoading, isPaused, fetchNextPage } = useInfiniteQuery({
     queryKey: [categoryId],
@@ -48,9 +55,9 @@ export default function CategoryView() {
   };
 
   return (
-    <div>
+    <Container>
       <Header />
       {renderContent()}
-    </div>
+    </Container>
   );
 }

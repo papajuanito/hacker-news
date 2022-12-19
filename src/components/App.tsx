@@ -1,7 +1,18 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import styled from 'styled-components';
 import CategoryView from './CategoryView';
+import Footer from './Footer';
 import ItemView from './ItemView';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+`;
 
 // One hour of query staleness
 export const staleTime = 1000 * 60 * 60;
@@ -38,7 +49,10 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <Container>
+        <RouterProvider router={router} />
+        <Footer />
+      </Container>
     </QueryClientProvider>
   );
 }

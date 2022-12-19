@@ -12,6 +12,11 @@ import { formatDistanceToNowStrict } from 'date-fns';
 
 const HACKER_NEWS_BASE_URL = 'https://news.ycombinator.com';
 
+const Container = styled.div`
+  flex-grow: 1;
+  overflow: scroll;
+`;
+
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
@@ -155,7 +160,7 @@ export default function ItemView() {
   if (!data || isLoading) return null;
 
   return (
-    <>
+    <Container>
       <Header>
         <HeaderLeft>
           <BsArrowLeft
@@ -188,6 +193,6 @@ export default function ItemView() {
         </ContentItem>
       </MetadataContainer>
       {renderComments()}
-    </>
+    </Container>
   );
 }
