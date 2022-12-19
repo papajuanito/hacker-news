@@ -35,7 +35,7 @@ const Url = styled.a`
 
 const Image = styled.img`
   width: 100%;
-  height: 180px;
+  min-height: 180px;
   border-radius: 5px;
   margin-top: 12px;
 
