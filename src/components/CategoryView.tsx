@@ -1,4 +1,5 @@
 import { useInfiniteQuery, useQueries } from '@tanstack/react-query';
+import { ReactNode, useRef } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
@@ -11,6 +12,7 @@ const LIMIT = 10;
 
 const Container = styled.div`
   flex-grow: 1;
+  height: 100%;
   overflow: scroll;
 `;
 
@@ -46,6 +48,7 @@ export default function CategoryView() {
         loader={<div>loading</div>}
         hasMore={true}
         next={fetchNextPage}
+        scrollableTarget="infinite-scrollable-container"
       >
         {stories.map((story, index) => (
           <StoryItem key={story} id={story} index={index} />
@@ -55,7 +58,7 @@ export default function CategoryView() {
   };
 
   return (
-    <Container>
+    <Container id="infinite-scrollable-container">
       <Header />
       {renderContent()}
     </Container>
