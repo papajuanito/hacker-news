@@ -9,7 +9,6 @@ import { Story } from '../types/HackerNews';
 import { BsArrowUpShort } from 'react-icons/bs';
 import StoryItemSkeleton from './StoryItemSkeleton';
 import { storeItem, DB_STORE, hasItem } from '../helpers/storage';
-import { staleTime } from './App';
 
 const Container = styled.div`
   display: flex;
@@ -23,6 +22,8 @@ const Container = styled.div`
 
   text-decoration: none;
   color: #ffffff;
+
+  overflow: hidden;
 `;
 
 const ImageContainer = styled.a`

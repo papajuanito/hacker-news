@@ -1,25 +1,46 @@
 import { useInfiniteQuery, useQueries } from '@tanstack/react-query';
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { getStoriesPaginated } from '../helpers/hackerNewsApi';
 import { Category } from '../types/HackerNews';
 import Header from './Header';
+import { useScrollPosition } from './ScrollContextProvider';
 import StoryItem from './StoryItem';
 
 const LIMIT = 10;
 
-const Container = styled.div`
+const Container = styled.div<{ shouldRender?: boolean }>`
   flex-grow: 1;
-  height: 100%;
   overflow: scroll;
+
+  opacity: ${({ shouldRender }) => (shouldRender ? '1' : '0')};
 `;
 
 export default function CategoryView() {
+  const [shouldRender, setShouldRender] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { categoryId = Category.TOP_STORIES } = useParams<{
     categoryId: Category;
   }>();
+
+  const { scrollPosition, setScrollPosition } = useScrollPosition();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!scrollContainerRef.current) return;
+
+      scrollContainerRef.current.scrollTo({
+        top: scrollPosition,
+      });
+
+      setShouldRender(true);
+
+      return () => {
+        clearTimeout(timeout);
+      };
+    }, 100);
+  }, [scrollPosition]);
 
   const { data, isLoading, isPaused, fetchNextPage } = useInfiniteQuery({
     queryKey: [categoryId],
@@ -51,14 +72,26 @@ export default function CategoryView() {
         scrollableTarget="infinite-scrollable-container"
       >
         {stories.map((story, index) => (
-          <StoryItem key={story} id={story} index={index} />
+          <div
+            key={story}
+            onClick={() => {
+              if (!scrollContainerRef.current) return;
+              setScrollPosition(scrollContainerRef.current.scrollTop);
+            }}
+          >
+            <StoryItem id={story} index={index} />
+          </div>
         ))}
       </InfiniteScroll>
     );
   };
 
   return (
-    <Container id="infinite-scrollable-container">
+    <Container
+      id="infinite-scrollable-container"
+      ref={scrollContainerRef}
+      shouldRender={shouldRender}
+    >
       <Header />
       {renderContent()}
     </Container>

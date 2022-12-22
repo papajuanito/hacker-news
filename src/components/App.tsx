@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import CategoryView from './CategoryView';
 import Footer from './Footer';
 import ItemView from './ItemView';
+import ScrollContextProvider from './ScrollContextProvider';
 
 const Container = styled.div`
   display: flex;
@@ -50,7 +51,9 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Container>
-        <RouterProvider router={router} />
+        <ScrollContextProvider>
+          <RouterProvider router={router} />
+        </ScrollContextProvider>
         <Footer />
       </Container>
     </QueryClientProvider>
