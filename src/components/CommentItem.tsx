@@ -56,6 +56,15 @@ const Content = styled.div`
 
   overflow: hidden;
   padding-bottom: 10px;
+
+  pre {
+    overflow-x: auto;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+  }
 `;
 
 const KidsContainer = styled.div`
@@ -99,6 +108,12 @@ export default function CommentItem({ id, parent = false }: Props) {
 
   const toggleVisibility = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
+
+    // @ts-ignore
+    if (e.target.tagName === 'A') {
+      return;
+    }
+
     setVisible((v) => {
       return !v;
     });
