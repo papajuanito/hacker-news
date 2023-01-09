@@ -5,6 +5,8 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
 
+  height: 160px;
+
   padding: 14px;
   border-bottom: 1px solid #3d3d3d;
 

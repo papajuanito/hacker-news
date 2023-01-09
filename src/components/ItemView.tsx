@@ -13,7 +13,7 @@ import { formatDistanceToNowStrict } from 'date-fns';
 const HACKER_NEWS_BASE_URL = 'https://news.ycombinator.com';
 
 const Container = styled.div`
-  flex-grow: 1;
+  height: 100%;
   overflow: scroll;
 `;
 

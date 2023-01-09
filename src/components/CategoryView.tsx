@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQueries } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useParams } from 'react-router-dom';
@@ -11,41 +11,36 @@ import StoryItem from './StoryItem';
 
 const LIMIT = 10;
 
-const Container = styled.div<{ shouldRender?: boolean }>`
-  flex-grow: 1;
+const Container = styled.div`
+  height: 100%;
   overflow: scroll;
-
-  opacity: ${({ shouldRender }) => (shouldRender ? '1' : '0')};
 `;
 
 export default function CategoryView() {
-  const [shouldRender, setShouldRender] = useState(false);
+  const [_, setShouldRender] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const { categoryId = Category.TOP_STORIES } = useParams<{
     categoryId: Category;
   }>();
 
   const { scrollPosition, setScrollPosition } = useScrollPosition();
+
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (!scrollContainerRef.current) return;
+    if (!scrollContainerRef.current) return;
 
-      scrollContainerRef.current.scrollTo({
-        top: scrollPosition,
-      });
+    scrollContainerRef.current.scrollTo({
+      top: scrollPosition,
+    });
 
-      setShouldRender(true);
+    setShouldRender(true);
+  }, [scrollPosition, scrollContainerRef.current]);
 
-      return () => {
-        clearTimeout(timeout);
-      };
-    }, 100);
-  }, [scrollPosition]);
-
-  const { data, isLoading, isPaused, fetchNextPage } = useInfiniteQuery({
+  const { data, isLoading, isPaused, fetchNextPage } = useInfiniteQuery<
+    number[]
+  >({
     queryKey: [categoryId],
     queryFn: ({ pageParam = 0 }) => {
-      return getStoriesPaginated(categoryId, pageParam, LIMIT);
+      return getStoriesPaginated(categoryId as Category, pageParam, LIMIT);
     },
     getNextPageParam: (_, pages) => {
       return pages.flatMap((i) => i).length;
@@ -61,6 +56,8 @@ export default function CategoryView() {
       return null;
     }
 
+    if (!scrollContainerRef.current) return null;
+
     const stories = data.pages.flatMap((i) => i);
 
     return (
@@ -69,7 +66,7 @@ export default function CategoryView() {
         loader={<div>loading</div>}
         hasMore={true}
         next={fetchNextPage}
-        scrollableTarget="infinite-scrollable-container"
+        scrollableTarget={scrollContainerRef.current as unknown as ReactNode}
       >
         {stories.map((story, index) => (
           <div
@@ -87,11 +84,7 @@ export default function CategoryView() {
   };
 
   return (
-    <Container
-      id="infinite-scrollable-container"
-      ref={scrollContainerRef}
-      shouldRender={shouldRender}
-    >
+    <Container ref={scrollContainerRef}>
       <Header />
       {renderContent()}
     </Container>

@@ -25,7 +25,7 @@ export const getStoriesPaginated = async (
 ): Promise<number[]> => {
   const all = await getStories(category);
   return all.slice(offset, offset + limit);
-}
+};
 
 export const getStoriesDecorated = async (
   category: Category,

@@ -13,6 +13,8 @@ import { storeItem, DB_STORE, hasItem } from '../helpers/storage';
 const Container = styled.div`
   display: flex;
 
+  height: 160px;
+
   padding: 14px;
   border-bottom: 1px solid #3d3d3d;
 
